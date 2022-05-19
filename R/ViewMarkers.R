@@ -1,0 +1,86 @@
+#' ViewMarkers
+#'
+#' Convenience wrapper for Seurat::FindMarkers to view markers interactively
+#'
+#' @param slot Slot to pull data from; note that if \code{test.use} is
+#' "negbinom", "poisson", or "DESeq2", \code{slot} will be set to "counts"
+#' @param cells.1 Vector of cell names belonging to group 1
+#' @param cells.2 Vector of cell names belonging to group 2
+#' @param features Genes to test. Default is to use all genes
+#' @param slot Slot to pull data from; note that if \code{test.use} is
+#' "negbinom", "poisson", or "DESeq2", \code{slot} will be set to "counts"
+#' @param logfc.threshold Limit testing to genes which show, on average, at least
+#' X-fold difference (log-scale) between the two groups of cells. Default is 0.1
+#' Increasing logfc.threshold speeds up the function, but can miss weaker signals.
+#' If the \code{slot} parameter is "scale.data" no filtering is performed.
+#' @param test.use Denotes which test to use. Available options are:
+#' \itemize{
+#'  \item{"wilcox"} : Identifies differentially expressed genes between two
+#'  groups of cells using a Wilcoxon Rank Sum test (default); will use a fast
+#'  implementation by Presto if installed
+#'  \item{"wilcox_limma"} : Identifies differentially expressed genes between two
+#'  groups of cells using the limma implementation of the Wilcoxon Rank Sum test;
+#'  set this option to reproduce results from Seurat v4
+#'  \item{"bimod"} : Likelihood-ratio test for single cell gene expression,
+#'  (McDavid et al., Bioinformatics, 2013)
+#'  \item{"roc"} : Identifies 'markers' of gene expression using ROC analysis.
+#'  For each gene, evaluates (using AUC) a classifier built on that gene alone,
+#'  to classify between two groups of cells. An AUC value of 1 means that
+#'  expression values for this gene alone can perfectly classify the two
+#'  groupings (i.e. Each of the cells in cells.1 exhibit a higher level than
+#'  each of the cells in cells.2). An AUC value of 0 also means there is perfect
+#'  classification, but in the other direction. A value of 0.5 implies that
+#'  the gene has no predictive power to classify the two groups. Returns a
+#'  'predictive power' (abs(AUC-0.5) * 2) ranked matrix of putative differentially
+#'  expressed genes.
+#'  \item{"t"} : Identify differentially expressed genes between two groups of
+#'  cells using the Student's t-test.
+#'  \item{"negbinom"} : Identifies differentially expressed genes between two
+#'   groups of cells using a negative binomial generalized linear model.
+#'   Use only for UMI-based datasets
+#'  \item{"poisson"} : Identifies differentially expressed genes between two
+#'   groups of cells using a poisson generalized linear model.
+#'   Use only for UMI-based datasets
+#'  \item{"LR"} : Uses a logistic regression framework to determine differentially
+#'  expressed genes. Constructs a logistic regression model predicting group
+#'  membership based on each feature individually and compares this to a null
+#'  model with a likelihood ratio test.
+#'  \item{"MAST"} : Identifies differentially expressed genes between two groups
+#'  of cells using a hurdle model tailored to scRNA-seq data. Utilizes the MAST
+#'  package to run the DE testing.
+#'  \item{"DESeq2"} : Identifies differentially expressed genes between two groups
+#'  of cells based on a model using DESeq2 which uses a negative binomial
+#'  distribution (Love et al, Genome Biology, 2014).This test does not support
+#'  pre-filtering of genes based on average difference (or percent detection rate)
+#'  between cell groups. However, genes may be pre-filtered based on their
+#'  minimum detection rate (min.pct) across both cell groups. To use this method,
+#'  please install DESeq2, using the instructions at
+#'  https://bioconductor.org/packages/release/bioc/html/DESeq2.html
+#' }
+#' @param min.pct  only test genes that are detected in a minimum fraction of
+#' min.pct cells in either of the two populations. Meant to speed up the function
+#' by not testing genes that are very infrequently expressed. Default is 0.01
+#' @param min.diff.pct  only test genes that show a minimum difference in the
+#' fraction of detection between the two groups. Set to -Inf by default
+#' @param verbose Print a progress bar once expression testing begins
+#' @param only.pos Only return positive markers (FALSE by default)
+#' @param max.cells.per.ident Down sample each identity class to a max number.
+#' Default is no downsampling. Not activated by default (set to Inf)
+#' @param random.seed Random seed for downsampling
+#' @param latent.vars Variables to test, used only when \code{test.use} is one of
+#' 'LR', 'negbinom', 'poisson', or 'MAST'
+#' @param min.cells.feature Minimum number of cells expressing the feature in at least one
+#' of the two groups, currently only used for poisson and negative binomial tests
+#' @param min.cells.group Minimum number of cells in one of the groups
+#' @param fc.results data.frame from FoldChange
+#' @param densify Convert the sparse matrix to a dense form before running the 
+#' DE test. This can provide speedups but might require higher memory; default is FALSE
+#' @export
+#' @examples
+#' ViewMarkers(obj, "clust1", "clust2")
+
+ViewMarkers = function(...) {
+  Markers = Seurat::FindMarkers(...)
+  View(Markers)
+  return()
+}
