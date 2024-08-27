@@ -81,6 +81,7 @@
 
 ViewMarkers = function(...) {
   Markers = Seurat::FindMarkers(...)
+  Markers = Markers[Markers$avg_log2FC > 0, ]
   View(Markers)
   return()
 }

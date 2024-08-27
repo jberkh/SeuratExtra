@@ -19,19 +19,27 @@ FindSubCluster <- function(object, cluster, ...) {
   stopifnot(class(object) == "Seurat")
   stopifnot(cluster %in% levels(object))
   
+  # Preparing function cal arguments
   # Capture all arguments in a list
   args <- list(...)  
-  
   # Put user inputs in args
   args$object = object
   args$cluster = cluster
-  
   # If not explicitly defined, use RNA_snn as default
   if (!"graph.name" %in% names(args)) args$graph.name = "RNA_snn"
-  
   # Override subcluster.name since subclusters are stored in Idents()
   args$subcluster.name = "subcluster"
   
-  Idents(object) = do.call(Seurat::FindSubCluster, args)$subcluster
+  # Get subcluster output
+  ids = do.call(Seurat::FindSubCluster, args)$subcluster
+  
+  # Fix factor levels
+  # Create all factor levels w/ loop
+  lvls = list(); i = 0
+  for (lvl in levels(object)) lvls[[i<-i+1]] = c(lvl, paste0(lvl, "_", 0:99))
+  # Retain existing levels from generated; Result == ordered
+  lvls = unlist(lvls)[unlist(lvls) %in% unique(ids)]
+  # Set object Idents() and return
+  Idents(object) = factor(ids, levels = lvls)
   return(object)
 }
