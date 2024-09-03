@@ -1,6 +1,8 @@
 exportPattern("^[[:alpha:]]+")
 
+
 export(FindSubCluster)
+
 export(GetReduction)
 export(PCA1)
 export(PCA2)
@@ -8,4 +10,7 @@ export(UMAP1)
 export(UMAP2)
 export(TSNE1)
 export(TSNE2)
+
+export(RandomSubset)
+
 export(ViewMarkers)

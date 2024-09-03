@@ -1,12 +1,12 @@
 Package: SeuratExtra
 Title: SeuratExtra
-Version: 0.1.1
-Date: 2024-08-19
+Version: 0.1.2
+Date: 2024-09-03
 Author: Jari Berkhout
 Maintainer: Jari Berkhout <73251322+jberkh@users.noreply.github.com>
 Description: Seurat functionality expanded with small quality of life functions
 LazyData: true
 Requires: Seurat
-RoxygenNote: 7.2.0
+RoxygenNote: 7.3.2
 Encoding: UTF-8
 License: GPL-3
